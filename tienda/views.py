@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import Producto
+from django.contrib import messages
 
 # Create your views here.
 
@@ -20,4 +21,26 @@ def guardar(request):
     #del formulario
     p=Producto(nombre=nombre,precio=precio,descripcion=descripcion)
     p.save()
+    messages.success(request,'producto enviado')
     return redirect('consultar')
+
+def eliminar(request,id):
+    producto=Producto.objects.filter(pk=id)
+    producto.delete()
+    messages.success(request,'producto eliminado')
+    return redirect('consultar')
+
+def detalle(request,id):
+    producto=Producto.objects.get(pk=id)
+   
+    return render(request,'productoEditar.html',{'producto' :producto})
+
+def editar(request):
+    nombre=request.POST["nombre"]
+    precio=request.POST["precio"]
+    descripcion=request.POST["descripcion"]
+    id=request.POST["id"]
+    Producto.objects.filter(pk=id).update(id=id,nombre=nombre,precio=precio,descripcion=descripcion)
+    messages.success(request,'producto actualizado')
+    return redirect('consultar')
+
